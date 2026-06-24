@@ -24,7 +24,7 @@
     (async function(){
       const errorBox = document.getElementById('err');
       try {
-        const res = await fetch('chunks/latest.00.txt?v=duration-height-20260624-2', { cache: 'no-store' });
+        const res = await fetch('chunks/latest.00.txt?v=duration-height-original', { cache: 'no-store' });
         if (!res.ok) throw new Error('无法读取最新版文件：HTTP ' + res.status);
         const b64 = (await res.text()).trim();
         const bin = atob(b64);
@@ -37,6 +37,15 @@
         } else {
           throw new Error('当前浏览器不支持在线解压，请使用新版 Chrome / Edge 打开。');
         }
+        const scrollFix = `<style id="online-scroll-fix">
+          .calendar-wrap, .course-view, .right-panel, .chapter-list, .review-day { overscroll-behavior: contain; }
+          .course-view { overflow-y: auto !important; overflow-x: auto !important; }
+          .course-shell { padding-bottom: 48px !important; }
+          .review-calendar-wrap { overflow-x: auto !important; overflow-y: auto !important; max-height: calc(100dvh - 360px); }
+          .review-calendar-grid { align-items: flex-start !important; }
+          .right-panel { overflow-y: auto !important; }
+        </style>`;
+        html = html.replace('</head>', scrollFix + '</head>');
         document.open();
         document.write(html);
         document.close();
